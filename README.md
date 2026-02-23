@@ -1,0 +1,2 @@
+# SmartTasks
+Proiect MPI
