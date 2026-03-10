@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "SmartTasks.API/1.0.0": {
+        "runtime": {
+          "SmartTasks.API.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SmartTasks.API/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
