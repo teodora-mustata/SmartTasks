@@ -1,0 +1,12 @@
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\bin\Debug\net9.0\SmartTasks.API.deps.json
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\bin\Debug\net9.0\SmartTasks.API.dll
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\bin\Debug\net9.0\SmartTasks.API.pdb
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.AssemblyInfoInputs.cache
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.AssemblyInfo.cs
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.csproj.CoreCompileInputs.cache
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.sourcelink.json
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.dll
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\refint\SmartTasks.API.dll
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\SmartTasks.API.pdb
+C:\Users\Plesu\desktop\SmartTasks\SmartTasks.API\obj\Debug\net9.0\ref\SmartTasks.API.dll
