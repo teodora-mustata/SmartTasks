@@ -1,6 +1,8 @@
 
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using SmartTasksAPI.Models.Data;
+using SmartTasksAPI.Repositories;
 using System.Text.Json.Serialization;
 
 namespace SmartTasksAPI
@@ -10,6 +12,17 @@ namespace SmartTasksAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IBoardRepository, BoardRepository>();
+            builder.Services.AddScoped<IListRepository, ListRepository>();
+            builder.Services.AddScoped<ICardRepository, CardRepository>();
+            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
+
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
