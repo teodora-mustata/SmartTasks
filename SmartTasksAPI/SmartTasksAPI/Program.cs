@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using SmartTasksAPI.Models.Data;
 using SmartTasksAPI.Repositories;
+using SmartTasksAPI.Services;
 using System.Text.Json.Serialization;
 
 namespace SmartTasksAPI
@@ -22,7 +23,11 @@ namespace SmartTasksAPI
             builder.Services.AddScoped<ICardRepository, CardRepository>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
-
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IBoardService, BoardService>();
+            builder.Services.AddScoped<IListService, ListService>();
+            builder.Services.AddScoped<ICardService, CardService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
