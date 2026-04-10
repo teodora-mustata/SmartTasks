@@ -1,0 +1,83 @@
+.boards-page {
+    min-height: 100vh;
+    padding: 32px;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+.boards-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.boards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 40px;
+    color: #f8fafc;
+}
+
+.subtitle {
+    margin-top: 8px;
+    color: #cbd5e1;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #38bdf8;
+    color: #082f49;
+}
+
+button:hover {
+    opacity: 0.95;
+}
+
+.state-box {
+    background: #111827;
+    color: #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.error-box {
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.16);
+}
+
+.boards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.board-card {
+    background: #111827;
+    color: #f8fafc;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+    border: 1px solid #1f2937;
+}
+
+.board-card h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+}
+
+.board-card p {
+    margin: 0;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
