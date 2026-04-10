@@ -56,7 +56,7 @@ export class Login {
     this.successMessage = result.message;
 
     setTimeout(() => {
-      this.router.navigateByUrl('/register');
+      this.router.navigateByUrl('/boards');
     }, 800);
   }
 }

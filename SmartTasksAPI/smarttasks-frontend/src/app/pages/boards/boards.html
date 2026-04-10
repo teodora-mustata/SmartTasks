@@ -1,0 +1,43 @@
+<div class="boards-page">
+    <div class="boards-container">
+        <div class="boards-header">
+            <div>
+                <h1>Boards</h1>
+                <p class="subtitle">View all available boards and choose one to work on.</p>
+            </div>
+
+            <button type="button" (click)="loadBoards()">Refresh</button>
+        </div>
+
+        @if (isLoading) {
+        <div class="state-box">
+            Loading boards...
+        </div>
+        }
+
+        @if (!isLoading && errorMessage) {
+        <div class="state-box error-box">
+            {{ errorMessage }}
+        </div>
+        }
+
+        @if (!isLoading && !errorMessage && boards.length === 0) {
+        <div class="state-box">
+            No boards found.
+        </div>
+        }
+
+        @if (!isLoading && !errorMessage && boards.length > 0) {
+        <div class="boards-grid">
+            @for (board of boards; track board.id) {
+            <div class="board-card">
+                <h2>{{ board.name }}</h2>
+                <p>
+                    {{ board.description || 'No description available.' }}
+                </p>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>
