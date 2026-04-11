@@ -1,0 +1,334 @@
+.card-details-page {
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.card-details-container {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.top-bar {
+    margin-bottom: 14px;
+}
+
+.back-link {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.state-box {
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.error-box {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.16);
+}
+
+.card-panel,
+.comments-panel {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.card-panel-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.card-title-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-title-area h1,
+.card-panel-top h1 {
+    font-size: 24px;
+    line-height: 1.1;
+    color: var(--text);
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.card-main-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.edit-btn,
+.save-btn {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
+.cancel-btn {
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--muted);
+}
+
+.delete-btn,
+.delete-comment-btn {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.move-btn {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn,
+.delete-btn,
+.delete-comment-btn,
+.move-btn {
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.card-description-box,
+.move-card-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.card-description-box {
+    margin-bottom: 12px;
+}
+
+.card-description-box h2,
+.move-card-box h2,
+.comments-panel h2 {
+    margin-bottom: 8px;
+    font-size: 17px;
+}
+
+.card-description-box p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.move-card-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.move-card-form select {
+    flex: 1;
+    min-width: 180px;
+}
+
+.edit-card-form,
+.create-comment-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.edit-card-form textarea {
+    min-height: 110px;
+}
+
+.create-comment-box textarea {
+    min-height: 76px;
+}
+
+.edit-card-form button,
+.create-comment-box button {
+    align-self: flex-start;
+}
+
+.form-error {
+    margin-top: 8px;
+    color: var(--danger);
+    font-size: 12px;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.comment-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    overflow: hidden;
+}
+
+.comment-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.comment-top h3 {
+    font-size: 14px;
+}
+
+.comment-date {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--muted-2);
+}
+
+.comment-item p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.due-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.due-none {
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--muted);
+}
+
+.due-overdue {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.due-today {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.due-soon {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
+.due-later {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.due-date {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+@media (max-width: 700px) {
+    .card-details-page {
+        padding: 10px;
+    }
+
+    .card-panel-top,
+    .comment-top {
+        flex-direction: column;
+    }
+
+    .move-card-form,
+    .card-main-actions {
+        width: 100%;
+    }
+}
+
+.assignees-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.assignees-box h2 {
+    margin-bottom: 8px;
+    font-size: 17px;
+}
+
+.assignees-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.assignee-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(148, 163, 184, 0.12);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.remove-assignee-btn {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-radius: 6px;
+    padding: 5px 7px;
+    font-size: 11px;
+}
+
+.assign-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.assign-form select {
+    flex: 1;
+    min-width: 220px;
+}
+
+.assign-btn {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
+.empty-inline {
+    color: var(--muted-2);
+    font-size: 12px;
+}

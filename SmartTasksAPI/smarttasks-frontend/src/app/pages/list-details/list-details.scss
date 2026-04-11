@@ -1,0 +1,156 @@
+.list-details-page {
+    min-height: 100vh;
+    padding: 14px;
+}
+
+.list-details-container {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.top-bar {
+    margin-bottom: 12px;
+}
+
+.back-link {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.list-header-box {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.list-header-box h1 {
+    margin-bottom: 4px;
+    font-size: 22px;
+    line-height: 1.05;
+    color: var(--text);
+}
+
+.list-header-box p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.state-box {
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.error-box {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.16);
+}
+
+.create-card-box {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.create-card-box h2 {
+    margin-bottom: 10px;
+    font-size: 17px;
+}
+
+.create-card-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.create-card-form textarea {
+    min-height: 72px;
+}
+
+.create-card-form button {
+    align-self: flex-start;
+}
+
+.form-error {
+    margin-top: 6px;
+    color: var(--danger);
+    font-size: 12px;
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+}
+
+.compact-card {
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.compact-card:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+}
+
+.card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-top-row h3 {
+    font-size: 16px;
+    line-height: 1.15;
+    color: var(--text);
+}
+
+.due-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.due-none {
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--muted);
+}
+
+.due-overdue {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.due-today {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.due-soon {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
+.due-later {
+    background: var(--success-bg);
+    color: var(--success);
+}

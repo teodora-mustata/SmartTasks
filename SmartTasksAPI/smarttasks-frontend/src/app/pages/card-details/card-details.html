@@ -1,0 +1,184 @@
+<div class="card-details-page">
+    <div class="card-details-container">
+        <div class="top-bar">
+            <a [routerLink]="['/boards', boardId]" class="back-link">
+                ← Back to board
+            </a>
+        </div>
+
+        @if (isLoading) {
+        <div class="state-box">Loading card...</div>
+        }
+
+        @if (!isLoading && errorMessage) {
+        <div class="state-box error-box">{{ errorMessage }}</div>
+        }
+
+        @if (!isLoading && card) {
+        <div class="card-panel">
+            @if (!isEditingCard) {
+            <div class="card-panel-top">
+                <div class="card-title-area">
+                    <h1>{{ card.title }}</h1>
+
+                    <div class="card-meta">
+                        <span class="due-badge" [ngClass]="'due-' + getDueDateStatus(card)">
+                            {{ getDueDateLabel(card) }}
+                        </span>
+
+                        @if (card.dueDateUtc) {
+                        <span class="due-date">
+                            {{ card.dueDateUtc | date:'mediumDate' }}
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-main-actions">
+                    <button type="button" class="edit-btn" (click)="startEditCard()">
+                        Edit
+                    </button>
+
+                    <button type="button" class="delete-btn" (click)="deleteCard()" [disabled]="deletingCard">
+                        {{ deletingCard ? 'Deleting...' : 'Delete' }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-description-box">
+                <h2>Description</h2>
+                <p>{{ card.description || 'No description available.' }}</p>
+            </div>
+
+            <div class="assignees-box">
+                <h2>Assignees</h2>
+
+                <div class="assignees-list">
+                    @if ((card.assignments ?? []).length === 0) {
+                    <div class="empty-inline">No assignees yet.</div>
+                    }
+
+                    @for (assignment of card.assignments ?? []; track assignment.userId) {
+                    <div class="assignee-chip">
+                        <span>{{ getAssignmentName(assignment) }}</span>
+
+                        <button type="button" class="remove-assignee-btn" (click)="unassignUser(assignment.userId)"
+                            [disabled]="unassigningUserId === assignment.userId">
+                            {{ unassigningUserId === assignment.userId ? 'Removing...' : 'Remove' }}
+                        </button>
+                    </div>
+                    }
+                </div>
+
+                <div class="assign-form">
+                    <select [(ngModel)]="selectedAssigneeId">
+                        <option value="">Select member</option>
+                        @for (member of availableAssignees; track member.id) {
+                        <option [value]="member.id">{{ member.fullName }} — {{ member.email }}</option>
+                        }
+                    </select>
+
+                    <button type="button" class="assign-btn" (click)="assignUser()" [disabled]="assigningUser">
+                        {{ assigningUser ? 'Assigning...' : 'Assign member' }}
+                    </button>
+                </div>
+
+                @if (assignError) {
+                <p class="form-error">{{ assignError }}</p>
+                }
+            </div>
+
+            <div class="move-card-box">
+                <h2>Change column</h2>
+
+                <div class="move-card-form">
+                    <select [(ngModel)]="selectedTargetListId">
+                        @for (target of moveTargets; track target.id) {
+                        <option [value]="target.id">{{ target.name }}</option>
+                        }
+                    </select>
+
+                    <button type="button" class="move-btn" (click)="moveCard()" [disabled]="movingCard">
+                        {{ movingCard ? 'Moving...' : 'Move card' }}
+                    </button>
+                </div>
+
+                @if (moveCardError) {
+                <p class="form-error">{{ moveCardError }}</p>
+                }
+            </div>
+            } @else {
+            <div class="card-panel-top">
+                <h1>Edit card</h1>
+            </div>
+
+            <div class="edit-card-form">
+                <input type="text" [(ngModel)]="editTitle" placeholder="Card title" />
+
+                <textarea [(ngModel)]="editDescription" placeholder="Card description" rows="5"></textarea>
+
+                <input type="date" [(ngModel)]="editDueDate" [min]="minDate" />
+
+                <div class="card-main-actions">
+                    <button type="button" class="save-btn" (click)="saveCard()" [disabled]="savingCard">
+                        {{ savingCard ? 'Saving...' : 'Save changes' }}
+                    </button>
+
+                    <button type="button" class="cancel-btn" (click)="cancelEditCard()" [disabled]="savingCard">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            @if (editCardError) {
+            <p class="form-error">{{ editCardError }}</p>
+            }
+            }
+        </div>
+
+        <div class="comments-panel">
+            <h2>Comments</h2>
+
+            <div class="create-comment-box">
+                <textarea [(ngModel)]="newCommentMessage" placeholder="Write a comment..." rows="3"></textarea>
+
+                <button type="button" (click)="createComment()" [disabled]="creatingComment">
+                    {{ creatingComment ? 'Posting...' : 'Add comment' }}
+                </button>
+            </div>
+
+            @if (createCommentError) {
+            <p class="form-error">{{ createCommentError }}</p>
+            }
+
+            @if (comments.length === 0) {
+            <div class="state-box">No comments yet.</div>
+            }
+
+            @if (comments.length > 0) {
+            <div class="comments-list">
+                @for (comment of comments; track comment.id) {
+                <div class="comment-item">
+                    <div class="comment-top">
+                        <div>
+                            <h3>{{ comment.author?.fullName || 'Unknown user' }}</h3>
+                            <span class="comment-date">
+                                {{ comment.createdAtUtc | date:'medium' }}
+                            </span>
+                        </div>
+
+                        <button type="button" class="delete-comment-btn" (click)="deleteComment(comment.id)"
+                            [disabled]="deletingCommentId === comment.id">
+                            {{ deletingCommentId === comment.id ? 'Deleting...' : 'Delete' }}
+                        </button>
+                    </div>
+
+                    <p>{{ comment.message }}</p>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

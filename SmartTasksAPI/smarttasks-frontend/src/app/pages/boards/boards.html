@@ -9,6 +9,24 @@
             <button type="button" (click)="loadBoards()">Refresh</button>
         </div>
 
+        <div class="create-board-box" (click)="$event.stopPropagation()">
+            <h2>Create new board</h2>
+
+            <div class="create-board-form">
+                <input type="text" [(ngModel)]="newBoardName" placeholder="Board name" />
+
+                <textarea [(ngModel)]="newBoardDescription" placeholder="Board description" rows="3"></textarea>
+
+                <button type="button" (click)="createBoard()" [disabled]="creatingBoard || resolvingCurrentUser">
+                    {{ creatingBoard ? 'Creating...' : 'Create board' }}
+                </button>
+            </div>
+
+            @if (createBoardError) {
+            <p class="form-error">{{ createBoardError }}</p>
+            }
+        </div>
+
         @if (isLoading) {
         <div class="state-box">
             Loading boards...
@@ -30,11 +48,53 @@
         @if (!isLoading && !errorMessage && boards.length > 0) {
         <div class="boards-grid">
             @for (board of boards; track board.id) {
-            <div class="board-card">
-                <h2>{{ board.name }}</h2>
-                <p>
-                    {{ board.description || 'No description available.' }}
-                </p>
+            <div class="board-card" (click)="openBoard(board.id)">
+                @if (editingBoardId === board.id) {
+                <div class="edit-board-box" (click)="$event.stopPropagation()">
+                    <input type="text" [(ngModel)]="editBoardById[board.id].name" placeholder="Board name" />
+
+                    <textarea [(ngModel)]="editBoardById[board.id].description" placeholder="Board description"
+                        rows="3"></textarea>
+
+                    <div class="board-actions">
+                        <button type="button" class="save-btn" (click)="saveEditBoard(board, $event)"
+                            [disabled]="savingBoardId === board.id">
+                            {{ savingBoardId === board.id ? 'Saving...' : 'Save' }}
+                        </button>
+
+                        <button type="button" class="cancel-btn" (click)="cancelEditBoard(board, $event)"
+                            [disabled]="savingBoardId === board.id">
+                            Cancel
+                        </button>
+                    </div>
+
+                    @if (editErrorByBoardId[board.id]) {
+                    <p class="form-error">{{ editErrorByBoardId[board.id] }}</p>
+                    }
+                </div>
+                } @else {
+                <div class="board-card-top">
+                    <div>
+                        <h2>{{ board.name }}</h2>
+                        <p>{{ board.description || 'No description available.' }}</p>
+                    </div>
+
+                    @if (isBoardOwner(board)) {
+                    <div class="board-owner-actions" (click)="$event.stopPropagation()">
+                        <button type="button" class="edit-btn" (click)="startEditBoard(board, $event)">
+                            Edit
+                        </button>
+
+                        <button type="button" class="delete-btn" (click)="deleteBoard(board.id, $event)"
+                            [disabled]="deletingBoardId === board.id">
+                            {{ deletingBoardId === board.id ? 'Deleting...' : 'Delete' }}
+                        </button>
+                    </div>
+                    }
+                </div>
+
+                <span class="open-text">Open board</span>
+                }
             </div>
             }
         </div>
