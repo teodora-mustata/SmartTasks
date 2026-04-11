@@ -1,0 +1,40 @@
+<div class="create-card-page">
+    <div class="create-card-container">
+        <div class="top-bar">
+            <a [routerLink]="['/boards', boardId]" class="back-link">← Back to board</a>
+        </div>
+
+        @if (isLoading) {
+        <div class="state-box">Loading board...</div>
+        }
+
+        @if (!isLoading && errorMessage) {
+        <div class="state-box error-box">{{ errorMessage }}</div>
+        }
+
+        @if (!isLoading && board && backlogList) {
+        <div class="create-card-box">
+            <h1>New card</h1>
+            <p class="subtitle">
+                This card will be created automatically in <strong>Backlog</strong>.
+            </p>
+
+            <div class="create-card-form">
+                <input type="text" [(ngModel)]="title" placeholder="Card title" />
+
+                <textarea [(ngModel)]="description" placeholder="Card description" rows="5"></textarea>
+
+                <input type="date" [(ngModel)]="dueDate" [min]="minDate" />
+
+                <button type="button" (click)="createCard()" [disabled]="creatingCard">
+                    {{ creatingCard ? 'Creating...' : 'Create card' }}
+                </button>
+            </div>
+
+            @if (createCardError) {
+            <p class="form-error">{{ createCardError }}</p>
+            }
+        </div>
+        }
+    </div>
+</div>

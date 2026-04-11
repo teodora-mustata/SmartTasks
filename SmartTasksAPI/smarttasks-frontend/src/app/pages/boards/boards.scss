@@ -1,83 +1,201 @@
 .boards-page {
     min-height: 100vh;
-    padding: 32px;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    padding: 14px;
 }
 
 .boards-container {
-    max-width: 1100px;
+    max-width: 760px;
     margin: 0 auto;
 }
 
 .boards-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 28px;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 
 h1 {
-    margin: 0;
-    font-size: 40px;
-    color: #f8fafc;
+    font-size: 24px;
+    line-height: 1.05;
+    color: var(--text);
 }
 
 .subtitle {
-    margin-top: 8px;
-    color: #cbd5e1;
-}
-
-button {
-    border: none;
-    border-radius: 10px;
-    padding: 12px 18px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    background: #38bdf8;
-    color: #082f49;
-}
-
-button:hover {
-    opacity: 0.95;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
 }
 
 .state-box {
-    background: #111827;
-    color: #e5e7eb;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: var(--shadow);
+    font-size: 13px;
 }
 
 .error-box {
-    color: #fecaca;
+    color: var(--danger);
     background: rgba(239, 68, 68, 0.16);
 }
 
+.create-board-box {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+.create-board-box h2 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.create-board-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.create-board-form textarea {
+    min-height: 72px;
+}
+
+.create-board-form button {
+    align-self: flex-start;
+}
+
+.form-error {
+    margin-top: 6px;
+    color: var(--danger);
+    font-size: 12px;
+}
+
 .boards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .board-card {
-    background: #111827;
-    color: #f8fafc;
-    border-radius: 18px;
-    padding: 22px;
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
-    border: 1px solid #1f2937;
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+    overflow: hidden;
+}
+
+.board-card:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
 }
 
 .board-card h2 {
-    margin: 0 0 12px;
-    font-size: 24px;
+    margin-bottom: 6px;
+    font-size: 17px;
+    line-height: 1.15;
 }
 
 .board-card p {
-    margin: 0;
-    color: #cbd5e1;
-    line-height: 1.5;
+    margin-bottom: 8px;
+    color: var(--muted);
+    line-height: 1.4;
+    font-size: 13px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.board-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.board-owner-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.edit-btn,
+.save-btn {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
+.cancel-btn {
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--muted);
+}
+
+.delete-btn {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn,
+.delete-btn {
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+}
+
+.edit-board-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.edit-board-box textarea {
+    min-height: 72px;
+}
+
+.edit-board-box input,
+.edit-board-box textarea {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.board-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.open-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+@media (max-width: 700px) {
+    .boards-page {
+        padding: 10px;
+    }
+
+    .boards-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .board-card-top {
+        flex-direction: column;
+    }
+
+    .board-owner-actions {
+        flex-wrap: wrap;
+    }
 }

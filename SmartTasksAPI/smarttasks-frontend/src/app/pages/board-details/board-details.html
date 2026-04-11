@@ -1,0 +1,118 @@
+<div class="board-details-page">
+    <div class="board-details-container">
+        <div class="top-bar">
+            <a routerLink="/boards" class="back-link">← Back to boards</a>
+        </div>
+
+        @if (isLoading) {
+        <div class="state-box">Loading board...</div>
+        }
+
+        @if (!isLoading && errorMessage) {
+        <div class="state-box error-box">{{ errorMessage }}</div>
+        }
+
+        @if (!isLoading && board) {
+        <div class="board-header">
+            <div>
+                <h1>{{ board.name }}</h1>
+                <p>{{ board.description || 'No description available.' }}</p>
+            </div>
+
+            <button type="button" (click)="goToCreateCard()">New card</button>
+        </div>
+
+        <div class="members-box">
+            <h2>Board members</h2>
+
+            <div class="members-list">
+                @for (member of board.members ?? []; track member.userId) {
+                <div class="member-chip">
+                    <div class="member-info">
+                        <strong>{{ getMemberName(member) }}</strong>
+                        @if (getMemberEmail(member)) {
+                        <span>{{ getMemberEmail(member) }}</span>
+                        }
+                    </div>
+
+                    @if (isOwnerMember(member)) {
+                    <span class="owner-badge">Owner</span>
+                    } @else {
+                    <button type="button" class="remove-member-btn" (click)="removeMember(member.userId)"
+                        [disabled]="removingMemberId === member.userId">
+                        {{ removingMemberId === member.userId ? 'Removing...' : 'Remove' }}
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="add-member-box">
+                <select [(ngModel)]="selectedMemberId">
+                    <option value="">Select user</option>
+                    @for (user of availableUsers; track user.id) {
+                    <option [value]="user.id">{{ user.fullName }} — {{ user.email }}</option>
+                    }
+                </select>
+
+                <button type="button" (click)="addMember()" [disabled]="addingMember">
+                    {{ addingMember ? 'Adding...' : 'Add member' }}
+                </button>
+            </div>
+
+            @if (memberError) {
+            <p class="form-error">{{ memberError }}</p>
+            }
+        </div>
+
+        <div class="kanban-wrapper">
+            @for (column of columns; track column.list.id) {
+            <div class="kanban-column">
+                <div class="column-header">
+                    <h2>{{ column.list.name }}</h2>
+                    <span class="card-count">{{ column.cards.length }}</span>
+                </div>
+
+                <p class="column-description">
+                    {{ getColumnDescription(column.list.name) }}
+                </p>
+
+                <div class="column-cards">
+                    @if (column.cards.length === 0) {
+                    <div class="empty-column">No cards</div>
+                    }
+
+                    @for (card of column.cards; track card.id) {
+                    <div class="kanban-card" (click)="openCard(card.id)">
+                        <h3>{{ card.title }}</h3>
+
+                        <div class="card-meta">
+                            <span class="due-badge" [ngClass]="'due-' + getDueDateStatus(card)">
+                                @if (card.dueDateUtc) {
+                                {{ card.dueDateUtc | date:'mediumDate' }}
+                                } @else {
+                                No due date
+                                }
+                            </span>
+                        </div>
+
+                        @if (hasAssignees(card)) {
+                        <div class="card-assignees">
+                            @for (name of getVisibleAssigneeNames(card); track name) {
+                            <span class="assignee-badge">{{ name }}</span>
+                            }
+
+                            @if (getRemainingAssigneeCount(card) > 0) {
+                            <span class="assignee-more">+{{ getRemainingAssigneeCount(card) }}</span>
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

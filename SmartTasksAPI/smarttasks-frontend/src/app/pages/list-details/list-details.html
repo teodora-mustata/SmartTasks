@@ -1,0 +1,64 @@
+<div class="list-details-page">
+    <div class="list-details-container">
+        <div class="top-bar">
+            <a [routerLink]="['/boards', list?.boardId]" class="back-link">
+                ← Back to board
+            </a>
+        </div>
+
+        @if (isLoading) {
+        <div class="state-box">Loading list...</div>
+        }
+
+        @if (!isLoading && errorMessage) {
+        <div class="state-box error-box">{{ errorMessage }}</div>
+        }
+
+        @if (!isLoading && list) {
+        <div class="list-header-box">
+            <h1>{{ list.name }}</h1>
+            <p>Open a card to view full details and comments.</p>
+        </div>
+
+        <div class="create-card-box">
+            <h2>Add new card</h2>
+
+            <div class="create-card-form">
+                <input type="text" [(ngModel)]="newCardTitle" placeholder="Card title" />
+
+                <textarea [(ngModel)]="newCardDescription" placeholder="Card description" rows="3"></textarea>
+
+                <input type="date" [(ngModel)]="newCardDueDate" [min]="minDate" />
+
+                <button type="button" (click)="createCard()" [disabled]="creatingCard">
+                    {{ creatingCard ? 'Creating...' : 'Add card' }}
+                </button>
+            </div>
+
+            @if (createCardError) {
+            <p class="form-error">{{ createCardError }}</p>
+            }
+        </div>
+
+        @if (cards.length === 0) {
+        <div class="state-box">No cards found for this list.</div>
+        }
+
+        @if (cards.length > 0) {
+        <div class="cards-list">
+            @for (card of cards; track card.id) {
+            <div class="card-item compact-card" (click)="openCard(card.id)">
+                <div class="card-top-row">
+                    <h3>{{ card.title }}</h3>
+
+                    <span class="due-badge" [ngClass]="'due-' + getDueDateStatus(card)">
+                        {{ card.dueDateUtc ? (card.dueDateUtc | date:'mediumDate') : 'No due date' }}
+                    </span>
+                </div>
+            </div>
+            }
+        </div>
+        }
+        }
+    </div>
+</div>

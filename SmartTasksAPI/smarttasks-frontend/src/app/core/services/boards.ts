@@ -14,4 +14,35 @@ export class Boards {
   getBoards(): Observable<BoardModel[]> {
     return this.http.get<BoardModel[]>(this.apiUrl);
   }
+
+  getBoardById(boardId: string): Observable<BoardModel> {
+    return this.http.get<BoardModel>(`${this.apiUrl}/${boardId}`);
+  }
+
+  createBoard(payload: {
+    name: string;
+    description?: string | null;
+    ownerId: string;
+  }): Observable<BoardModel> {
+    return this.http.post<BoardModel>(this.apiUrl, payload);
+  }
+
+  updateBoard(boardId: string, payload: {
+    name: string;
+    description?: string | null;
+  }): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${boardId}`, payload);
+  }
+
+  deleteBoard(boardId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${boardId}`);
+  }
+
+  addMember(boardId: string, payload: { userId: string }): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${boardId}/members`, payload);
+  }
+
+  removeMember(boardId: string, userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${boardId}/members/${userId}`);
+  }
 }
