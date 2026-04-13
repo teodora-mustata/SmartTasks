@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 
 export interface MockUser {
   username: string;
@@ -12,7 +10,6 @@ export interface MockUser {
   providedIn: 'root'
 })
 export class Auth {
-  constructor(private http: HttpClient) {}
   private readonly usersKey = 'smarttasks_users';
   private readonly sessionKey = 'smarttasks_current_user';
 
@@ -24,7 +21,8 @@ export class Auth {
   private saveUsers(users: MockUser[]): void {
     localStorage.setItem(this.usersKey, JSON.stringify(users));
   }
-  async register(user: MockUser): Promise<{ success: boolean; message: string }> {
+
+  register(user: MockUser): { success: boolean; message: string } {
     const users = this.getUsers();
 
     const usernameExists = users.some(
@@ -47,15 +45,6 @@ export class Auth {
         success: false,
         message: 'An account with this email already exists.'
       };
-    }
-
-    // Attempt to persist the user to the backend. Backend expects { fullName, email }.
-    try {
-      await firstValueFrom(this.http.post('/api/users', { fullName: user.username.trim(), email: user.email.trim().toLowerCase() }));
-    } catch (err) {
-      // If backend call fails, continue and save locally so UX isn't blocked.
-      // This preserves existing local-auth behavior while ensuring server persistence when available.
-      console.warn('Failed to persist user to API:', err);
     }
 
     users.push({
