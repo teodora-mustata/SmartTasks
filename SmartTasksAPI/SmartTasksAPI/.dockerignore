@@ -1,0 +1,17 @@
+bin/
+obj/
+**/bin/
+**/obj/
+.vs/
+.vscode/
+.DS_Store
+*.user
+*.suo
+*.userosscache
+*.sln
+*.log
+.idea/
+.git/
+.gitignore
+docker-compose*.yml
+Dockerfile*
