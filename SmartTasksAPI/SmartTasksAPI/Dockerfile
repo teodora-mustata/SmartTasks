@@ -15,8 +15,10 @@ WORKDIR /src/SmartTasksAPI
 
 COPY . .
 
+
 RUN dotnet restore "SmartTasksAPI.csproj"
 RUN dotnet publish "SmartTasksAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
 
 FROM debian:bookworm-slim
 WORKDIR /app
