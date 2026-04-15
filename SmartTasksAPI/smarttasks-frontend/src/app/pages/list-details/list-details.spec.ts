@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 
 import { ListDetails } from './list-details';
 
@@ -8,9 +10,23 @@ describe('ListDetails', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListDetails]
+      imports: [ListDetails],
+      providers: [
+        provideHttpClient(),
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => null
+              }
+            }
+          }
+        }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ListDetails);
     component = fixture.componentInstance;
