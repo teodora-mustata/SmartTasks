@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build, test, and measure coverage
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: SmartTasksAPI
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore SmartTasksAPI.sln
+
+      - name: Build solution
+        run: dotnet build SmartTasksAPI.sln --configuration Release --no-restore
+
+      - name: Run tests with coverage thresholds
+        run: |
+          dotnet test SmartTasksAPI.sln \
+            --configuration Release \
+            --no-build \
+            --logger "trx;LogFileName=test-results.trx" \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:CoverletOutput=./TestResults/Coverage/ \
+            /p:Threshold=80 \
+            /p:ThresholdType=line,branch,method \
+            /p:ThresholdStat=total
+
+      - name: Install report generator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Add global tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Generate coverage report
+        run: |
+          reportgenerator \
+            -reports:"**/coverage.cobertura.xml" \
+            -targetdir:"CoverageReport" \
+            -reporttypes:"HtmlInline;Cobertura"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: SmartTasksAPI/TestResults
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: SmartTasksAPI/CoverageReport
