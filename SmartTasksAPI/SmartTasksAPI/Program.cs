@@ -46,40 +46,43 @@ namespace SmartTasksAPI
 
             // Ensure database is created and migrations are applied on startup.
             // This will run once per environment (the first time the DB is created in the Docker volume).
-            using (var scope = app.Services.CreateScope())
+            if (!app.Environment.IsEnvironment("Testing"))
             {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                const int maxRetries = 15;
-                var delay = TimeSpan.FromSeconds(5);
-                for (int attempt = 0; attempt < maxRetries; attempt++)
+                using (var scope = app.Services.CreateScope())
                 {
-                    try
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    const int maxRetries = 15;
+                    var delay = TimeSpan.FromSeconds(5);
+                    for (int attempt = 0; attempt < maxRetries; attempt++)
                     {
-                        var pending = db.Database.GetPendingMigrations();
-                        if (pending.Any())
+                        try
                         {
-                            db.Database.Migrate();
-                            logger.LogInformation("Applied {Count} pending EF migrations.", pending.Count());
+                            var pending = db.Database.GetPendingMigrations();
+                            if (pending.Any())
+                            {
+                                db.Database.Migrate();
+                                logger.LogInformation("Applied {Count} pending EF migrations.", pending.Count());
+                            }
+                            else
+                            {
+                                // No migrations found - ensure database is created to support dev scenarios without migrations
+                                db.Database.EnsureCreated();
+                                logger.LogInformation("No EF migrations found; ensured database is created.");
+                            }
+                            break;
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            // No migrations found - ensure database is created to support dev scenarios without migrations
-                            db.Database.EnsureCreated();
-                            logger.LogInformation("No EF migrations found; ensured database is created.");
+                            logger.LogWarning(ex, "Database unavailable, retrying in {Delay}s (attempt {Attempt}/{Max})", delay.TotalSeconds, attempt + 1, maxRetries);
+                            if (attempt == maxRetries - 1)
+                            {
+                                logger.LogError(ex, "Failed to apply database migrations after {Max} attempts.", maxRetries);
+                                throw;
+                            }
+                            Thread.Sleep(delay);
                         }
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogWarning(ex, "Database unavailable, retrying in {Delay}s (attempt {Attempt}/{Max})", delay.TotalSeconds, attempt + 1, maxRetries);
-                        if (attempt == maxRetries - 1)
-                        {
-                            logger.LogError(ex, "Failed to apply database migrations after {Max} attempts.");
-                            throw;
-                        }
-                        Thread.Sleep(delay);
                     }
                 }
             }
@@ -91,7 +94,10 @@ namespace SmartTasksAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            if (!app.Environment.IsEnvironment("Testing"))
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseAuthorization();
 
