@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build, test, and measure coverage
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: SmartTasksAPI
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore SmartTasksAPI.sln
+
+      - name: Build solution
+        run: dotnet build SmartTasksAPI.sln --configuration Release --no-restore
+
+      - name: Run tests with coverage output
+        run: >
+          dotnet test SmartTasksAPI.sln
+          --configuration Release
+          --no-build
+          --results-directory TestResults
+          --logger "trx;LogFileName=test-results.trx"
+          /p:CollectCoverage=true
+          /p:CoverletOutputFormat=cobertura
+          /p:CoverletOutput=TestResults/Coverage/
+
+      - name: Install report generator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Add global tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Generate coverage report
+        run: >
+          reportgenerator
+          -reports:"SmartTasksAPI.Tests/TestResults/Coverage/coverage.cobertura.xml"
+          -targetdir:"SmartTasksAPI.Tests/TestResults/CoverageReport"
+          -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+
+      - name: Enforce minimum coverage threshold
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          threshold = 0.80
+          coverage_path = "SmartTasksAPI.Tests/TestResults/Coverage/coverage.cobertura.xml"
+
+          root = ET.parse(coverage_path).getroot()
+          line_rate = float(root.attrib["line-rate"])
+          branch_rate = float(root.attrib["branch-rate"])
+
+          if line_rate < threshold:
+              raise SystemExit(f"Line coverage {line_rate:.2%} is below threshold {threshold:.2%}")
+
+          if branch_rate < threshold:
+              raise SystemExit(f"Branch coverage {branch_rate:.2%} is below threshold {threshold:.2%}")
+
+          print(f"Coverage checks passed: line={line_rate:.2%}, branch={branch_rate:.2%}")
+          PY
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: SmartTasksAPI/TestResults/**/*.trx
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            SmartTasksAPI/SmartTasksAPI.Tests/TestResults/CoverageReport
+            SmartTasksAPI/SmartTasksAPI.Tests/TestResults/Coverage/coverage.cobertura.xml
