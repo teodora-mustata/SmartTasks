@@ -1,10 +1,15 @@
 
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SmartTasksAPI.Models;
 using SmartTasksAPI.Models.Data;
 using SmartTasksAPI.Repositories;
 using SmartTasksAPI.Services;
 using System.Text.Json.Serialization;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Linq;
@@ -27,10 +32,31 @@ namespace SmartTasksAPI
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IBoardService, BoardService>();
             builder.Services.AddScoped<IListService, ListService>();
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            var jwtKey = builder.Configuration["Jwt:Key"]
+                ?? throw new InvalidOperationException("Missing JWT key configuration.");
+
+            builder.Services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                    };
+                });
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
@@ -99,6 +125,7 @@ namespace SmartTasksAPI
                 app.UseHttpsRedirection();
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

@@ -18,6 +18,10 @@ namespace SmartTasksAPI.Models.Data
                 .HasIndex(x => x.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .HasIndex(x => x.FullName)
+                .IsUnique();
+
             modelBuilder.Entity<BoardMember>()
                 .HasKey(x => new { x.BoardId, x.UserId });
 
