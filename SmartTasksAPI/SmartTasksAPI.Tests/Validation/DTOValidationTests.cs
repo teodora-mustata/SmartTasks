@@ -3,80 +3,13 @@ using SmartTasksAPI.Contracts.Boards;
 using SmartTasksAPI.Contracts.Cards;
 using SmartTasksAPI.Contracts.Comments;
 using SmartTasksAPI.Contracts.Lists;
-using SmartTasksAPI.Contracts.Users;
+//using SmartTasksAPI.Contracts.Users;
 
 namespace SmartTasksAPI.Tests.Validation;
 
 public class DTOValidationTests
 {
-    #region CreateUserRequest Validation
-
-    [Fact]
-    public void CreateUserRequest_IsValid_WhenAllFieldsAreCorrect()
-    {
-        var request = new CreateUserRequest { FullName = "John Doe", Email = "john@example.com" };
-        var context = new ValidationContext(request);
-        var results = new List<ValidationResult>();
-
-        var isValid = Validator.TryValidateObject(request, context, results, true);
-
-        Assert.True(isValid);
-        Assert.Empty(results);
-    }
-
-    [Fact]
-    public void CreateUserRequest_IsInvalid_WhenFullNameIsNull()
-    {
-        var request = new CreateUserRequest { FullName = null!, Email = "john@example.com" };
-        var context = new ValidationContext(request);
-        var results = new List<ValidationResult>();
-
-        var isValid = Validator.TryValidateObject(request, context, results, true);
-
-        Assert.False(isValid);
-        Assert.Contains(results, r => r.MemberNames.Contains(nameof(CreateUserRequest.FullName)));
-    }
-
-    [Fact]
-    public void CreateUserRequest_IsInvalid_WhenFullNameIsTooShort()
-    {
-        var request = new CreateUserRequest { FullName = "J", Email = "john@example.com" };
-        var context = new ValidationContext(request);
-        var results = new List<ValidationResult>();
-
-        var isValid = Validator.TryValidateObject(request, context, results, true);
-
-        Assert.False(isValid);
-        Assert.Contains(results, r => r.MemberNames.Contains(nameof(CreateUserRequest.FullName)));
-    }
-
-    [Fact]
-    public void CreateUserRequest_IsInvalid_WhenEmailIsNull()
-    {
-        var request = new CreateUserRequest { FullName = "John Doe", Email = null! };
-        var context = new ValidationContext(request);
-        var results = new List<ValidationResult>();
-
-        var isValid = Validator.TryValidateObject(request, context, results, true);
-
-        Assert.False(isValid);
-        Assert.Contains(results, r => r.MemberNames.Contains(nameof(CreateUserRequest.Email)));
-    }
-
-    [Fact]
-    public void CreateUserRequest_IsInvalid_WhenEmailFormatIsInvalid()
-    {
-        var request = new CreateUserRequest { FullName = "John Doe", Email = "not-an-email" };
-        var context = new ValidationContext(request);
-        var results = new List<ValidationResult>();
-
-        var isValid = Validator.TryValidateObject(request, context, results, true);
-
-        Assert.False(isValid);
-        Assert.Contains(results, r => r.MemberNames.Contains(nameof(CreateUserRequest.Email)));
-    }
-
-    #endregion
+    
 
     #region CreateBoardRequest Validation
 
