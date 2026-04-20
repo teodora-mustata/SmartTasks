@@ -166,4 +166,63 @@ public class ListServiceTests
         Assert.True(result);
         listRepository.Verify(x => x.DeleteAsync(list), Times.Once);
     }
+
+    [Fact]
+    public async Task CreateAsync_ShouldTrimWhitespace_FromName()
+    {
+        var boardId = Guid.NewGuid();
+        BoardList? addedList = null;
+
+        var listRepository = new Mock<IListRepository>();
+        var boardRepository = new Mock<IBoardRepository>();
+
+        boardRepository.Setup(x => x.GetByIdAsync(boardId)).ReturnsAsync(new Board { Id = boardId, Name = "Board" });
+        listRepository.Setup(x => x.GetNextPositionAsync(boardId)).ReturnsAsync(1);
+        listRepository.Setup(x => x.AddAsync(It.IsAny<BoardList>()))
+            .Callback<BoardList>(list => addedList = list)
+            .ReturnsAsync((BoardList list) => list);
+
+        var service = new ListService(listRepository.Object, boardRepository.Object);
+
+        await service.CreateAsync(boardId, "  \t\nTrimmed\n\t  ");
+
+        Assert.Equal("Trimmed", addedList?.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldTrimWhitespace_FromName()
+    {
+        var listId = Guid.NewGuid();
+        var list = new BoardList { Id = listId, BoardId = Guid.NewGuid(), Name = "Old", Position = 1 };
+
+        var listRepository = new Mock<IListRepository>();
+        var boardRepository = new Mock<IBoardRepository>();
+
+        listRepository.Setup(x => x.GetByIdAsync(listId)).ReturnsAsync(list);
+
+        var service = new ListService(listRepository.Object, boardRepository.Object);
+
+        await service.UpdateAsync(listId, "   Updated   ", 2);
+
+        Assert.Equal("Updated", list.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldUpdatePosition_WhenPositionChanges()
+    {
+        var listId = Guid.NewGuid();
+        var list = new BoardList { Id = listId, BoardId = Guid.NewGuid(), Name = "List", Position = 1 };
+
+        var listRepository = new Mock<IListRepository>();
+        var boardRepository = new Mock<IBoardRepository>();
+
+        listRepository.Setup(x => x.GetByIdAsync(listId)).ReturnsAsync(list);
+
+        var service = new ListService(listRepository.Object, boardRepository.Object);
+
+        var result = await service.UpdateAsync(listId, "List", 10);
+
+        Assert.True(result);
+        Assert.Equal(10, list.Position);
+    }
 }

@@ -138,4 +138,51 @@ public class CommentServiceTests
         Assert.True(result);
         commentRepository.Verify(x => x.DeleteAsync(comment), Times.Once);
     }
+
+    [Fact]
+    public async Task CreateAsync_ShouldTrimWhitespace_FromMessage()
+    {
+        var cardId = Guid.NewGuid();
+        var authorId = Guid.NewGuid();
+        CardComment? addedComment = null;
+
+        var commentRepository = new Mock<ICommentRepository>();
+        var cardRepository = new Mock<ICardRepository>();
+        var userRepository = new Mock<IUserRepository>();
+
+        cardRepository.Setup(x => x.GetByIdAsync(cardId)).ReturnsAsync(new CardItem { Id = cardId, ListId = Guid.NewGuid(), Title = "Task" });
+        userRepository.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(new User { Id = authorId, FullName = "User", Email = "user@test.com" });
+        commentRepository.Setup(x => x.AddAsync(It.IsAny<CardComment>()))
+            .Callback<CardComment>(comment => addedComment = comment)
+            .ReturnsAsync((CardComment comment) => comment);
+
+        var service = new CommentService(commentRepository.Object, cardRepository.Object, userRepository.Object);
+
+        await service.CreateAsync(cardId, authorId, "  \n\tTrimmed message\n\t  ");
+
+        Assert.Equal("Trimmed message", addedComment?.Message);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ShouldVerifyCommentAuthorAndCard()
+    {
+        var cardId = Guid.NewGuid();
+        var authorId = Guid.NewGuid();
+
+        var commentRepository = new Mock<ICommentRepository>();
+        var cardRepository = new Mock<ICardRepository>();
+        var userRepository = new Mock<IUserRepository>();
+
+        cardRepository.Setup(x => x.GetByIdAsync(cardId)).ReturnsAsync(new CardItem { Id = cardId, ListId = Guid.NewGuid(), Title = "Task" });
+        userRepository.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(new User { Id = authorId, FullName = "User", Email = "user@test.com" });
+        commentRepository.Setup(x => x.AddAsync(It.IsAny<CardComment>())).ReturnsAsync((CardComment c) => c);
+
+        var service = new CommentService(commentRepository.Object, cardRepository.Object, userRepository.Object);
+
+        await service.CreateAsync(cardId, authorId, "Message");
+
+        cardRepository.Verify(x => x.GetByIdAsync(cardId), Times.Once);
+        userRepository.Verify(x => x.GetByIdAsync(authorId), Times.Once);
+        commentRepository.Verify(x => x.AddAsync(It.IsAny<CardComment>()), Times.Once);
+    }
 }
