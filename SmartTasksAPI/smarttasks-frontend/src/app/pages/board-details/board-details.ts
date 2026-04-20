@@ -12,6 +12,7 @@ import { Boards as BoardsService } from '../../core/services/boards';
 import { Cards as CardsService } from '../../core/services/cards';
 import { Lists as ListsService } from '../../core/services/lists';
 import { Users as UsersService, BackendUser } from '../../core/services/users';
+import { AuthUser } from '../../core/services/auth';
 import { BoardAccess } from '../../core/services/board-access';
 
 interface KanbanColumn {
@@ -31,7 +32,7 @@ export class BoardDetails implements OnInit {
   isLoading = true;
   errorMessage = '';
 
-  currentBackendUser: BackendUser | null = null;
+  currentBackendUser: AuthUser | null = null;
 
   allUsers: BackendUser[] = [];
   selectedMemberId = '';

@@ -13,7 +13,7 @@ export interface BackendUser {
   providedIn: 'root'
 })
 export class Users {
-  private readonly apiUrl = 'http://localhost:5065/api/users';
+  private readonly apiUrl = '/api/users';
 
   constructor(private http: HttpClient) { }
 

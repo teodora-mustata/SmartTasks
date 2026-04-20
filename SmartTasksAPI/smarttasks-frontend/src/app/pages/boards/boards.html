@@ -6,7 +6,10 @@
                 <p class="subtitle">View all available boards and choose one to work on.</p>
             </div>
 
-            <button type="button" (click)="loadBoards()">Refresh</button>
+            <div class="header-actions">
+                <button type="button" (click)="loadBoards()">Refresh</button>
+                <button type="button" class="logout-btn" (click)="logout()">Logout</button>
+            </div>
         </div>
 
         <div class="create-board-box" (click)="$event.stopPropagation()">

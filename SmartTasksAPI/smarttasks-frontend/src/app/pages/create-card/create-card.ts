@@ -9,7 +9,7 @@ import { BoardListModel } from '../../core/models/board-list.model';
 import { Boards as BoardsService } from '../../core/services/boards';
 import { Cards as CardsService } from '../../core/services/cards';
 import { BoardAccess } from '../../core/services/board-access';
-import { BackendUser } from '../../core/services/users';
+import { AuthUser } from '../../core/services/auth';
 
 @Component({
   selector: 'app-create-card',
@@ -22,7 +22,7 @@ export class CreateCard implements OnInit {
   board: BoardModel | null = null;
   backlogList: BoardListModel | null = null;
 
-  currentBackendUser: BackendUser | null = null;
+  currentBackendUser: AuthUser | null = null;
 
   isLoading = true;
   errorMessage = '';

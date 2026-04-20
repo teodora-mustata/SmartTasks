@@ -7,7 +7,7 @@ import { CardCommentModel } from '../models/card-comment.model';
   providedIn: 'root'
 })
 export class Comments {
-  private readonly baseUrl = 'http://localhost:5065/api';
+  private readonly baseUrl = '/api';
 
   constructor(private http: HttpClient) { }
 

@@ -2,110 +2,95 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-export interface MockUser {
-  username: string;
+export interface AuthUser {
+  id: string;
+  fullName: string;
   email: string;
-  password: string;
+  createdAtUtc: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class Auth {
-  constructor(private http: HttpClient) {}
-  private readonly usersKey = 'smarttasks_users';
-  private readonly sessionKey = 'smarttasks_current_user';
+  private readonly baseUrl = '/api/auth';
+  private readonly tokenKey = 'smarttasks_token';
+  private readonly userKey = 'smarttasks_user';
 
-  private getUsers(): MockUser[] {
-    const raw = localStorage.getItem(this.usersKey);
-    return raw ? JSON.parse(raw) as MockUser[] : [];
-  }
+  constructor(private http: HttpClient) { }
 
-  private saveUsers(users: MockUser[]): void {
-    localStorage.setItem(this.usersKey, JSON.stringify(users));
-  }
-  async register(user: MockUser): Promise<{ success: boolean; message: string }> {
-    const users = this.getUsers();
-
-    const usernameExists = users.some(
-      u => u.username.trim().toLowerCase() === user.username.trim().toLowerCase()
-    );
-
-    if (usernameExists) {
-      return {
-        success: false,
-        message: 'Username already exists.'
-      };
-    }
-
-    const emailExists = users.some(
-      u => u.email.trim().toLowerCase() === user.email.trim().toLowerCase()
-    );
-
-    if (emailExists) {
-      return {
-        success: false,
-        message: 'An account with this email already exists.'
-      };
-    }
-
-    // Attempt to persist the user to the backend. Backend expects { fullName, email }.
+  async register(payload: {
+    fullName: string;
+    email: string;
+    password: string;
+  }): Promise<{ success: boolean; message: string }> {
     try {
-      await firstValueFrom(this.http.post('/api/users', { fullName: user.username.trim(), email: user.email.trim().toLowerCase() }));
-    } catch (err) {
-      // If backend call fails, continue and save locally so UX isn't blocked.
-      // This preserves existing local-auth behavior while ensuring server persistence when available.
-      console.warn('Failed to persist user to API:', err);
-    }
+      const response = await firstValueFrom(
+        this.http.post<AuthResponse>(`${this.baseUrl}/register`, payload)
+      );
 
-    users.push({
-      username: user.username.trim(),
-      email: user.email.trim().toLowerCase(),
-      password: user.password
-    });
-
-    this.saveUsers(users);
-
-    return {
-      success: true,
-      message: 'Account created successfully.'
-    };
-  }
-
-  login(username: string, password: string): { success: boolean; message: string } {
-    const users = this.getUsers();
-
-    const foundUser = users.find(
-      u =>
-        u.username.trim().toLowerCase() === username.trim().toLowerCase() &&
-        u.password === password
-    );
-
-    if (!foundUser) {
+      this.saveSession(response);
+      return {
+        success: true,
+        message: 'Account created successfully.'
+      };
+    } catch (err: any) {
+      const backendMessage = err?.error?.message;
       return {
         success: false,
-        message: 'Invalid credentials.'
+        message: backendMessage || 'Registration failed.'
       };
     }
+  }
 
-    localStorage.setItem(this.sessionKey, JSON.stringify(foundUser));
+  async login(identifier: string, password: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post<AuthResponse>(`${this.baseUrl}/login`, {
+          identifier,
+          password
+        })
+      );
 
-    return {
-      success: true,
-      message: 'Login successful.'
-    };
+      this.saveSession(response);
+      return {
+        success: true,
+        message: 'Login successful.'
+      };
+    } catch (err: any) {
+      const backendMessage = err?.error?.message;
+      return {
+        success: false,
+        message: backendMessage || 'Invalid credentials.'
+      };
+    }
   }
 
   logout(): void {
-    localStorage.removeItem(this.sessionKey);
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
   }
 
-  getCurrentUser(): MockUser | null {
-    const raw = localStorage.getItem(this.sessionKey);
-    return raw ? JSON.parse(raw) as MockUser : null;
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  getCurrentUser(): AuthUser | null {
+    const raw = localStorage.getItem(this.userKey);
+    return raw ? JSON.parse(raw) as AuthUser : null;
   }
 
   isLoggedIn(): boolean {
-    return this.getCurrentUser() !== null;
+    return !!this.getToken() && !!this.getCurrentUser();
+  }
+
+  private saveSession(response: AuthResponse): void {
+    localStorage.setItem(this.tokenKey, response.token);
+    localStorage.setItem(this.userKey, JSON.stringify(response.user));
   }
 }

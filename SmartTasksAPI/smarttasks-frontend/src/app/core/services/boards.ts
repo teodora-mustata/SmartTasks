@@ -7,7 +7,7 @@ import { BoardModel } from '../models/board.model';
   providedIn: 'root'
 })
 export class Boards {
-  private readonly apiUrl = 'http://localhost:5065/api/boards';
+  private readonly apiUrl = '/api/boards';
 
   constructor(private http: HttpClient) { }
 

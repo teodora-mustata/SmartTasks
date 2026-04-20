@@ -7,7 +7,7 @@ import { CardItemModel } from '../models/card-item.model';
   providedIn: 'root'
 })
 export class Cards {
-  private readonly baseUrl = 'http://localhost:5065/api';
+  private readonly baseUrl = '/api';
 
   constructor(private http: HttpClient) { }
 
@@ -37,8 +37,8 @@ export class Cards {
   }
 
   moveCard(cardId: string, payload: {
-    TargetListId: string;
-    TargetPosition: number;
+    targetListId: string;
+    targetPosition: number;
   }): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/cards/${cardId}/move`, payload);
   }
