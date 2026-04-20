@@ -323,62 +323,51 @@ public class BoardServiceTests
         Assert.True(result);
         boardRepository.Verify(x => x.RemoveMemberAsync(member), Times.Once);
     }
-}
-
-public class BoardServiceTestsOriginal
-{
-    [Fact]
-    public async Task CreateAsync_ShouldThrow_WhenOwnerDoesNotExist_Original()
-    {
-        var boardRepository = new Mock<IBoardRepository>();
-        var userRepository = new Mock<IUserRepository>();
-
-        userRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((User?)null);
-
-        var service = new BoardService(boardRepository.Object, userRepository.Object);
-
-        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
-            service.CreateAsync("Board", "Desc", Guid.NewGuid()));
-    }
 
     [Fact]
-    public async Task AddMemberAsync_ShouldThrow_WhenMemberAlreadyExists_Original()
+    public async Task CreateAsync_ShouldTrimWhitespace_FromNameAndDescription()
     {
-        var boardId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
-
-        var boardRepository = new Mock<IBoardRepository>();
-        var userRepository = new Mock<IUserRepository>();
-
-        boardRepository.Setup(x => x.GetByIdAsync(boardId))
-            .ReturnsAsync(new Board { Id = boardId, OwnerId = Guid.NewGuid(), Name = "Board" });
-        userRepository.Setup(x => x.GetByIdAsync(userId))
-            .ReturnsAsync(new User { Id = userId, Email = "a@a.com", FullName = "A" });
-        boardRepository.Setup(x => x.MemberExistsAsync(boardId, userId))
-            .ReturnsAsync(true);
-
-        var service = new BoardService(boardRepository.Object, userRepository.Object);
-
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            service.AddMemberAsync(boardId, userId));
-    }
-
-    [Fact]
-    public async Task RemoveMemberAsync_ShouldThrow_WhenTryingToRemoveOwner_Original()
-    {
-        var boardId = Guid.NewGuid();
         var ownerId = Guid.NewGuid();
+        Board? addedBoard = null;
 
         var boardRepository = new Mock<IBoardRepository>();
         var userRepository = new Mock<IUserRepository>();
 
-        boardRepository.Setup(x => x.GetByIdAsync(boardId))
-            .ReturnsAsync(new Board { Id = boardId, OwnerId = ownerId, Name = "Board" });
+        userRepository.Setup(x => x.GetByIdAsync(ownerId))
+            .ReturnsAsync(new User { Id = ownerId, FullName = "Owner", Email = "owner@test.com" });
+
+        boardRepository.Setup(x => x.AddAsync(It.IsAny<Board>()))
+            .Callback<Board>(board => addedBoard = board)
+            .ReturnsAsync((Board board) => board);
+
+        boardRepository.Setup(x => x.AddMemberAsync(It.IsAny<BoardMember>())).Returns(Task.CompletedTask);
+        boardRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid id) => new Board { Id = id, Name = addedBoard?.Name ?? "", OwnerId = ownerId });
 
         var service = new BoardService(boardRepository.Object, userRepository.Object);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            service.RemoveMemberAsync(boardId, ownerId));
+        var result = await service.CreateAsync("   Spaces   ", "\t\tTabs\t\t", ownerId);
+
+        Assert.Equal("Spaces", addedBoard?.Name);
+        Assert.Equal("Tabs", addedBoard?.Description);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldTrimWhitespace_FromNameAndDescription()
+    {
+        var boardId = Guid.NewGuid();
+        var existing = new Board { Id = boardId, Name = "Old", Description = "Old", OwnerId = Guid.NewGuid() };
+
+        var boardRepository = new Mock<IBoardRepository>();
+        var userRepository = new Mock<IUserRepository>();
+
+        boardRepository.Setup(x => x.GetByIdAsync(boardId)).ReturnsAsync(existing);
+
+        var service = new BoardService(boardRepository.Object, userRepository.Object);
+
+        await service.UpdateAsync(boardId, "\n\nNew\n\n", "   New Desc   ");
+
+        Assert.Equal("New", existing.Name);
+        Assert.Equal("New Desc", existing.Description);
     }
 }

@@ -381,30 +381,73 @@ public class CardServiceTests
         Assert.True(result);
         cardRepository.Verify(x => x.RemoveAssignmentAsync(assignment), Times.Once);
     }
-}
 
-public class CardServiceTestsOriginal
-{
     [Fact]
-    public async Task AssignUserAsync_ShouldThrow_WhenUserAlreadyAssigned_Original()
+    public async Task CreateAsync_ShouldTrimWhitespace_FromTitleAndDescription()
     {
-        var cardId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
+        var listId = Guid.NewGuid();
+        var dueDate = DateTime.UtcNow;
+        CardItem? addedCard = null;
 
         var cardRepository = new Mock<ICardRepository>();
         var listRepository = new Mock<IListRepository>();
         var userRepository = new Mock<IUserRepository>();
 
-        cardRepository.Setup(x => x.GetByIdAsync(cardId))
-            .ReturnsAsync(new CardItem { Id = cardId, ListId = Guid.NewGuid(), Title = "Task" });
-        userRepository.Setup(x => x.GetByIdAsync(userId))
-            .ReturnsAsync(new User { Id = userId, Email = "user@test.com", FullName = "User" });
-        cardRepository.Setup(x => x.GetAssignmentAsync(cardId, userId))
-            .ReturnsAsync(new CardAssignment { CardId = cardId, UserId = userId });
+        listRepository.Setup(x => x.GetByIdAsync(listId)).ReturnsAsync(new BoardList { Id = listId, Name = "Todo" });
+        cardRepository.Setup(x => x.GetNextPositionAsync(listId)).ReturnsAsync(1);
+        cardRepository.Setup(x => x.AddAsync(It.IsAny<CardItem>()))
+            .Callback<CardItem>(card => addedCard = card)
+            .ReturnsAsync((CardItem card) => card);
 
         var service = new CardService(cardRepository.Object, listRepository.Object, userRepository.Object);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            service.AssignUserAsync(cardId, userId));
+        await service.CreateAsync(listId, "  \n\tCard\t\n  ", "   Description   ", dueDate);
+
+        Assert.Equal("Card", addedCard?.Title);
+        Assert.Equal("Description", addedCard?.Description);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldTrimWhitespace_FromTitleAndDescription()
+    {
+        var cardId = Guid.NewGuid();
+        var card = new CardItem { Id = cardId, ListId = Guid.NewGuid(), Title = "Old", Description = "Old Desc", Position = 1 };
+        var dueDate = DateTime.UtcNow;
+
+        var cardRepository = new Mock<ICardRepository>();
+        var listRepository = new Mock<IListRepository>();
+        var userRepository = new Mock<IUserRepository>();
+
+        cardRepository.Setup(x => x.GetByIdAsync(cardId)).ReturnsAsync(card);
+
+        var service = new CardService(cardRepository.Object, listRepository.Object, userRepository.Object);
+
+        await service.UpdateAsync(cardId, "  Updated  ", "  New Desc  ", 2, dueDate);
+
+        Assert.Equal("Updated", card.Title);
+        Assert.Equal("New Desc", card.Description);
+    }
+
+    [Fact]
+    public async Task MoveAsync_ShouldUpdatePositionWhenMovingWithinSameList()
+    {
+        var cardId = Guid.NewGuid();
+        var listId = Guid.NewGuid();
+        var card = new CardItem { Id = cardId, ListId = listId, Title = "Task", Position = 2 };
+
+        var cardRepository = new Mock<ICardRepository>();
+        var listRepository = new Mock<IListRepository>();
+        var userRepository = new Mock<IUserRepository>();
+
+        cardRepository.Setup(x => x.GetByIdAsync(cardId)).ReturnsAsync(card);
+        listRepository.Setup(x => x.GetByIdAsync(listId)).ReturnsAsync(new BoardList { Id = listId, Name = "Todo" });
+
+        var service = new CardService(cardRepository.Object, listRepository.Object, userRepository.Object);
+
+        var result = await service.MoveAsync(cardId, listId, 5);
+
+        Assert.True(result);
+        Assert.Equal(listId, card.ListId);
+        Assert.Equal(5, card.Position);
     }
 }
