@@ -7,7 +7,7 @@ import { forkJoin } from 'rxjs';
 import { BoardModel } from '../../core/models/board.model';
 import { Boards as BoardsService } from '../../core/services/boards';
 import { Lists as ListsService } from '../../core/services/lists';
-import { BackendUser } from '../../core/services/users';
+import { Auth, AuthUser } from '../../core/services/auth';
 import { BoardAccess } from '../../core/services/board-access';
 
 @Component({
@@ -21,7 +21,7 @@ export class Boards implements OnInit {
   isLoading = true;
   errorMessage = '';
 
-  currentBackendUser: BackendUser | null = null;
+  currentBackendUser: AuthUser | null = null;
   resolvingCurrentUser = true;
 
   newBoardName = '';
@@ -48,6 +48,7 @@ export class Boards implements OnInit {
     private boardsService: BoardsService,
     private listsService: ListsService,
     private boardAccess: BoardAccess,
+    private authService: Auth,
     private router: Router
   ) { }
 
@@ -64,6 +65,11 @@ export class Boards implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigateByUrl('/login');
   }
 
   loadBoards(): void {

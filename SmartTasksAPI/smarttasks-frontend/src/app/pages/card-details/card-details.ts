@@ -12,6 +12,7 @@ import { BoardModel } from '../../core/models/board.model';
 import { Cards as CardsService } from '../../core/services/cards';
 import { Comments as CommentsService } from '../../core/services/comments';
 import { Boards as BoardsService } from '../../core/services/boards';
+import { AuthUser } from '../../core/services/auth';
 import { BackendUser } from '../../core/services/users';
 import { BoardAccess } from '../../core/services/board-access';
 
@@ -33,7 +34,7 @@ export class CardDetails implements OnInit {
   isLoading = true;
   errorMessage = '';
 
-  currentBackendUser: BackendUser | null = null;
+  currentBackendUser: AuthUser | null = null;
 
   boardId = '';
   cardId = '';
@@ -342,8 +343,8 @@ export class CardDetails implements OnInit {
     this.movingCard = true;
 
     this.cardsService.moveCard(this.card.id, {
-      TargetListId: this.selectedTargetListId,
-      TargetPosition: target.cardCount + 1
+      targetListId: this.selectedTargetListId,
+      targetPosition: target.cardCount + 1
     }).subscribe({
       next: () => {
         this.movingCard = false;

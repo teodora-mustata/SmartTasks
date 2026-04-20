@@ -7,8 +7,7 @@ import { BoardListModel } from '../models/board-list.model';
   providedIn: 'root'
 })
 export class Lists {
-  private readonly baseUrl = 'http://localhost:5065/api';
-
+  private readonly baseUrl = '/api';
   constructor(private http: HttpClient) { }
 
   createList(boardId: string, name: string): Observable<BoardListModel> {

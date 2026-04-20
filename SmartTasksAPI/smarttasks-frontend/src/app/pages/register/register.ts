@@ -70,7 +70,7 @@ export class Register {
     return this.registerForm.get('confirmPassword');
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -79,24 +79,22 @@ export class Register {
       return;
     }
 
-    (async () => {
-      const result = await this.authService.register({
-        username: this.registerForm.value.username ?? '',
-        email: this.registerForm.value.email ?? '',
-        password: this.registerForm.value.password ?? ''
-      });
+    const result = await this.authService.register({
+      fullName: this.registerForm.value.username ?? '',
+      email: this.registerForm.value.email ?? '',
+      password: this.registerForm.value.password ?? ''
+    });
 
-      if (!result.success) {
-        this.errorMessage = result.message;
-        return;
-      }
+    if (!result.success) {
+      this.errorMessage = result.message;
+      return;
+    }
 
-      this.successMessage = result.message;
-      this.registerForm.reset();
+    this.successMessage = result.message;
+    this.registerForm.reset();
 
-      setTimeout(() => {
-        this.router.navigateByUrl('/login');
-      }, 1000);
-    })();
+    setTimeout(() => {
+      this.router.navigateByUrl('/login');
+    }, 1000);
   }
 }

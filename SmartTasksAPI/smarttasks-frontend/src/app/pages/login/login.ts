@@ -34,7 +34,7 @@ export class Login {
     return this.loginForm.get('password');
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -43,7 +43,7 @@ export class Login {
       return;
     }
 
-    const result = this.authService.login(
+    const result = await this.authService.login(
       this.loginForm.value.username ?? '',
       this.loginForm.value.password ?? ''
     );
