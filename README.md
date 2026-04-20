@@ -36,7 +36,16 @@ SmartTasks is a collaborative project management platform consisting of:
 
 ---
 
-## 🛠️ 3. Tech Stack
+## 🧑‍💻 3. Team & Roles
+
+| Student Name                  | Primary Role                         | GitHub Username    |
+|-------------------------------|--------------------------------------|--------------------|
+| Mustață Teodora               | Team Lead / DevOps / Infrastructure  | teodora-mustata    |
+| Peleș Ștefania                | Frontend Developer                   | PelesStefania      |
+| Radea Constantin-Sebastian    | Backend Developer                    | Sebi23647          |
+| Pleșu Iulia                   | QA Engineer / Tester                 | Iulia-plesu        |
+
+## 🛠️ 4. Tech Stack
 
 - **Backend:** ASP.NET Core (.NET 8), Entity Framework Core, PostgreSQL (Npgsql)
 - **Frontend:** Angular (served via nginx in Docker)
@@ -45,7 +54,7 @@ SmartTasks is a collaborative project management platform consisting of:
 
 ---
 
-## 📂 4. Project Structure
+## 📂 5. Project Structure
 
 - `SmartTasksAPI/` — backend (controllers, services, EF Core, etc.)
 - `smarttasks-frontend/` — Angular frontend
@@ -54,7 +63,7 @@ SmartTasks is a collaborative project management platform consisting of:
 
 ---
 
-## ▶️ 5. Setup
+## ▶️ 6. Setup
 
 ### 📦 Requirements
 - .NET SDK 8.0
