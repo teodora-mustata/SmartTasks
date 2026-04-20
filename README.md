@@ -1,20 +1,42 @@
-# SmartTasks
+# 🚀 SmartTasks
 
-A powerful task management app that takes to-do lists to the next level, similar to Jira or Trello, helping teams organize, track, and complete tasks efficiently.
-
----
-
-## 1. Description & Objectives
-
-SmartTasks is designed to solve the problem of scattered task management and lack of visibility in team workflows. It allows users to create, assign, and track tasks with advanced features like priority, deadlines, and project boards.
-
-- **Objective 1:** Provide a flexible task management system for teams and individuals.  
-- **Objective 2:** Enable project visualization through Kanban-style boards and lists.  
-- **Target Users:** Teams, project managers, developers, and anyone looking for an advanced to-do system.
+A modern task management app inspired by Jira and Trello, built to help teams organize, track, and complete work efficiently.
 
 ---
 
-## 2. Team & Roles
+## 📌 1. Overview
+
+SmartTasks is a collaborative project management platform consisting of:
+
+- **Backend API** (`SmartTasksAPI`) — handles business logic, authentication, and data persistence  
+- **Frontend** (`smarttasks-frontend`) — provides the user interface and client-side functionality  
+
+---
+
+## ⚙️ 2. Core Features
+
+### 👤 Users
+- Register and authenticate (JWT-based)
+- Basic user management (`/api/users`)
+
+### 📋 Boards
+- Create, update, delete boards (`/api/boards`)
+- Manage members and ownership
+
+### 📑 Lists
+- Organize boards into columns
+- Maintain order using positions
+
+### 📝 Cards
+- Create, update, move, and delete tasks
+- Support for descriptions, due dates, assignments, and comments
+
+### 💬 Comments
+- Add, view, and delete comments on cards
+
+---
+
+## 🧑‍💻 3. Team & Roles
 
 | Student Name                  | Primary Role                         | GitHub Username    |
 |-------------------------------|--------------------------------------|--------------------|
@@ -23,14 +45,32 @@ SmartTasks is designed to solve the problem of scattered task management and lac
 | Radea Constantin-Sebastian    | Backend Developer                    | Sebi23647          |
 | Pleșu Iulia                   | QA Engineer / Tester                 | Iulia-plesu        |
 
+## 🛠️ 4. Tech Stack
+
+- **Backend:** ASP.NET Core (.NET 8), Entity Framework Core, PostgreSQL (Npgsql)
+- **Frontend:** Angular (served via nginx in Docker)
+- **Auth:** JWT Authentication
+- **Other:** Docker, Swagger
+
 ---
 
-## 3. Architecture & Technologies
+## 📂 5. Project Structure
 
-TBD
+- `SmartTasksAPI/` — backend (controllers, services, EF Core, etc.)
+- `smarttasks-frontend/` — Angular frontend
+- `SmartTasksAPI.Tests/` — unit & integration tests
+- `docker-compose.yml` — container setup
 
 ---
 
-## 4. Local Setup (How to Run)
+## ▶️ 6. Setup
 
-TBD
+### 📦 Requirements
+- .NET SDK 8.0
+- Docker
+- PostgreSQL
+
+### ▶️ Run with Docker
+In the repository root run:
+```bash
+docker compose up --build
