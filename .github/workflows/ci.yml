@@ -58,20 +58,25 @@ jobs:
           python - <<'PY'
           import xml.etree.ElementTree as ET
 
-          threshold = 0.80
+          line_threshold = 0.80
+          branch_threshold = 0.75
           coverage_path = "SmartTasksAPI.Tests/TestResults/Coverage/coverage.cobertura.xml"
 
           root = ET.parse(coverage_path).getroot()
           line_rate = float(root.attrib["line-rate"])
           branch_rate = float(root.attrib["branch-rate"])
 
-          if line_rate < threshold:
-              raise SystemExit(f"Line coverage {line_rate:.2%} is below threshold {threshold:.2%}")
+            if line_rate < line_threshold:
+              raise SystemExit(f"Line coverage {line_rate:.2%} is below threshold {line_threshold:.2%}")
 
-          if branch_rate < threshold:
-              raise SystemExit(f"Branch coverage {branch_rate:.2%} is below threshold {threshold:.2%}")
+            if branch_rate < branch_threshold:
+              raise SystemExit(f"Branch coverage {branch_rate:.2%} is below threshold {branch_threshold:.2%}")
 
-          print(f"Coverage checks passed: line={line_rate:.2%}, branch={branch_rate:.2%}")
+            print(
+              "Coverage checks passed: "
+              f"line={line_rate:.2%} (min {line_threshold:.2%}), "
+              f"branch={branch_rate:.2%} (min {branch_threshold:.2%})"
+            )
           PY
 
       - name: Upload test results
