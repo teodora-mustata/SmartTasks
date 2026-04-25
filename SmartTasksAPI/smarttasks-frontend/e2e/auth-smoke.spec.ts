@@ -7,6 +7,46 @@ test.describe('Auth smoke flow', () => {
         const email = `smoke-${timestamp}@example.com`;
         const password = 'secret123';
 
+        await page.route('**/api/auth/register', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    token: 'register-token',
+                    user: {
+                        id: '11111111-1111-1111-1111-111111111111',
+                        fullName: username,
+                        email,
+                        createdAtUtc: new Date().toISOString()
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/auth/login', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    token: 'login-token',
+                    user: {
+                        id: '11111111-1111-1111-1111-111111111111',
+                        fullName: username,
+                        email,
+                        createdAtUtc: new Date().toISOString()
+                    }
+                })
+            });
+        });
+
+        await page.route('**/api/boards', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify([])
+            });
+        });
+
         await page.goto('/register');
 
         await page.fill('#username', username);

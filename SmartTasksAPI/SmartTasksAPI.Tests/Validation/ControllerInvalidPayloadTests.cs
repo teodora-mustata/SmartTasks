@@ -3,7 +3,7 @@ using SmartTasksAPI.Contracts.Boards;
 using SmartTasksAPI.Contracts.Cards;
 using SmartTasksAPI.Contracts.Comments;
 using SmartTasksAPI.Contracts.Lists;
-using SmartTasksAPI.Contracts.Users;
+using SmartTasksAPI.Contracts.Auth;
 
 namespace SmartTasksAPI.Tests.Validation;
 
@@ -25,7 +25,7 @@ public class ControllerInvalidPayloadTests
     [Fact]
     public void Create_User_WithNullFullName_ShouldBeInvalid()
     {
-        var request = new CreateUserRequest { FullName = null!, Email = "test@example.com" };
+        var request = new RegisterRequest { FullName = null!, Email = "test@example.com", Password = "secret123" };
 
         var isValid = IsModelValid(request);
 
@@ -35,7 +35,7 @@ public class ControllerInvalidPayloadTests
     [Fact]
     public void Create_User_WithInvalidEmail_ShouldBeInvalid()
     {
-        var request = new CreateUserRequest { FullName = "John Doe", Email = "not-an-email" };
+        var request = new RegisterRequest { FullName = "John Doe", Email = "not-an-email", Password = "secret123" };
 
         var isValid = IsModelValid(request);
 

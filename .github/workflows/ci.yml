@@ -2,12 +2,8 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - feature/**
   pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -116,7 +112,7 @@ jobs:
         run: npm ci
 
       - name: Run Angular unit tests
-        run: npx ng test --watch=false --browsers=ChromeHeadless
+        run: npm run test:ci
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium

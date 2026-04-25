@@ -101,18 +101,20 @@ public class ApiIntegrationTests
         using var factory = new TestWebApplicationFactory();
         using var client = factory.CreateClient();
 
-        var first = await client.PostAsJsonAsync("/api/users", new
+        var first = await client.PostAsJsonAsync("/api/auth/register", new
         {
             fullName = "Duplicate User",
-            email = "duplicate.integration@example.com"
+            email = "duplicate.integration@example.com",
+            password = "P@ssw0rd123"
         });
 
-        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
 
-        var second = await client.PostAsJsonAsync("/api/users", new
+        var second = await client.PostAsJsonAsync("/api/auth/register", new
         {
             fullName = "Duplicate User 2",
-            email = "duplicate.integration@example.com"
+            email = "duplicate.integration@example.com",
+            password = "P@ssw0rd123"
         });
 
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
@@ -281,14 +283,18 @@ public class ApiIntegrationTests
 
     private static async Task<Guid> CreateUserAsync(HttpClient client, string fullName, string email)
     {
-        var response = await client.PostAsJsonAsync("/api/users", new
+        var response = await client.PostAsJsonAsync("/api/auth/register", new
         {
             fullName,
-            email
+            email,
+            password = "P@ssw0rd123"
         });
 
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        return await ReadIdAsync(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var user = payload.GetProperty("user");
+        return user.GetProperty("id").GetGuid();
     }
 
     private static async Task<Guid> ReadIdAsync(HttpResponseMessage response)
