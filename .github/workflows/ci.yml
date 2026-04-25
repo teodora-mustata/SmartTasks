@@ -53,7 +53,7 @@ jobs:
           -targetdir:"SmartTasksAPI.Tests/TestResults/CoverageReport"
           -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
-      - name: Enforce minimum coverage threshold
+      - name: Enforce coverage thresholds (line 80%, branch 75%)
         run: |
           python - <<'PY'
           import xml.etree.ElementTree as ET
@@ -66,17 +66,17 @@ jobs:
           line_rate = float(root.attrib["line-rate"])
           branch_rate = float(root.attrib["branch-rate"])
 
-            if line_rate < line_threshold:
+          if line_rate < line_threshold:
               raise SystemExit(f"Line coverage {line_rate:.2%} is below threshold {line_threshold:.2%}")
 
-            if branch_rate < branch_threshold:
+          if branch_rate < branch_threshold:
               raise SystemExit(f"Branch coverage {branch_rate:.2%} is below threshold {branch_threshold:.2%}")
 
-            print(
+          print(
               "Coverage checks passed: "
               f"line={line_rate:.2%} (min {line_threshold:.2%}), "
               f"branch={branch_rate:.2%} (min {branch_threshold:.2%})"
-            )
+          )
           PY
 
       - name: Upload test results
