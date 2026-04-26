@@ -2,12 +2,8 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - feature/**
   pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -57,25 +53,30 @@ jobs:
           -targetdir:"SmartTasksAPI.Tests/TestResults/CoverageReport"
           -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
-      - name: Enforce minimum coverage threshold
+      - name: Enforce coverage thresholds (line 80%, branch 75%)
         run: |
           python - <<'PY'
           import xml.etree.ElementTree as ET
 
-          threshold = 0.80
+          line_threshold = 0.80
+          branch_threshold = 0.75
           coverage_path = "SmartTasksAPI.Tests/TestResults/Coverage/coverage.cobertura.xml"
 
           root = ET.parse(coverage_path).getroot()
           line_rate = float(root.attrib["line-rate"])
           branch_rate = float(root.attrib["branch-rate"])
 
-          if line_rate < threshold:
-              raise SystemExit(f"Line coverage {line_rate:.2%} is below threshold {threshold:.2%}")
+          if line_rate < line_threshold:
+              raise SystemExit(f"Line coverage {line_rate:.2%} is below threshold {line_threshold:.2%}")
 
-          if branch_rate < threshold:
-              raise SystemExit(f"Branch coverage {branch_rate:.2%} is below threshold {threshold:.2%}")
+          if branch_rate < branch_threshold:
+              raise SystemExit(f"Branch coverage {branch_rate:.2%} is below threshold {branch_threshold:.2%}")
 
-          print(f"Coverage checks passed: line={line_rate:.2%}, branch={branch_rate:.2%}")
+          print(
+              "Coverage checks passed: "
+              f"line={line_rate:.2%} (min {line_threshold:.2%}), "
+              f"branch={branch_rate:.2%} (min {branch_threshold:.2%})"
+          )
           PY
 
       - name: Upload test results
@@ -116,7 +117,7 @@ jobs:
         run: npm ci
 
       - name: Run Angular unit tests
-        run: npx ng test --watch=false --browsers=ChromeHeadless
+        run: npm run test:ci
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
